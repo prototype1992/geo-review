@@ -1,0 +1,61 @@
+* {
+    margin: 0;
+    padding: 0;
+    outline: none;
+    border: none;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    user-select: none;
+}
+
+html, body, .wrapper {
+    height: 100%;
+    background-color: #eee;
+    font-family: 'Fira Sans', 'Arial', sans-serif;
+}
+
+#map {
+    height: 100vh;
+    width: 100vw;
+    background-color: #eee;
+    position: relative;
+}
+
+.logo {
+    position: absolute;
+    right: 23px;
+    bottom: 38px;
+    z-index: 10;
+    background-image: url('./img/logo.png');
+    width: 107px;
+    height: 79px;
+}
+
+/*custom scroll*/
+::-webkit-scrollbar-button {
+    width: 5px;
+    height: 0;
+}
+
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    height: 80px;
+    background-color: #c4c4c4;
+}
+
+::-webkit-resizer {
+    width: 4px;
+    height: 0;
+}
+
+::-webkit-scrollbar {
+    width: 4px;
+}
