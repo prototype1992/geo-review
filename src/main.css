@@ -28,6 +28,156 @@ html, body, .wrapper {
     position: relative;
 }
 
+/*add block*/
+.addReview {
+    width: 380px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding-bottom: 15px;
+
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateY(-50%) translateX(-50%);
+
+    z-index: 2;
+}
+
+.header {
+    background-color: #ff8663;
+    color: #ffffff;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+}
+
+.address {
+    padding-left: 15px;
+    position: relative;
+}
+
+.address:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background-image: url('./img/map-icon.png');
+    background-repeat: no-repeat;
+    width: 8px;
+    height: 14px;
+}
+
+.close {
+    background-image: url('./img/close.png');
+    background-repeat: no-repeat;
+    width: 14px;
+    height: 14px;
+    border: none;
+}
+
+.list {
+    list-style-type: none;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 15px;
+    height: 154px;
+    overflow-y: auto;
+    border-bottom: 1px solid #c4c4c4;
+}
+
+.review-item {
+    margin-bottom: 15px;
+}
+
+.review-top {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 7px;
+}
+
+.review-name {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.review-place {
+    margin-right: 10px;
+}
+
+.review-date {
+}
+
+.review-text {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.form {
+    margin-bottom: 15px;
+    padding: 15px;
+}
+
+.form-title {
+    margin-bottom: 15px;
+}
+
+.form-name {
+    display: block;
+    width: 100%;
+    height: 34px;
+    border-radius: 17px;
+    border: 1px solid #c4c4c4;
+    padding-left: 15px;
+    margin-bottom: 15px;
+    font-size: 15px;
+    color: #9f9f9f;
+}
+
+.form-place {
+    display: block;
+    width: 100%;
+    height: 34px;
+    border-radius: 17px;
+    border: 1px solid #c4c4c4;
+    padding-left: 15px;
+    margin-bottom: 15px;
+    font-size: 15px;
+    color: #9f9f9f;
+}
+
+.form-text {
+    display: block;
+    width: 100%;
+    height: 130px;
+    border-radius: 17px;
+    border: 1px solid #c4c4c4;
+    padding-left: 15px;
+    padding-top: 10px;
+    font-size: 15px;
+    color: #9f9f9f;
+    resize: vertical;
+    min-height: 70px;
+    max-height: 150px;
+}
+
+.add-btn-group {
+    text-align: right;
+    padding: 0 15px;
+}
+
+.add-btn {
+    background-color: #ff8663;
+    color: #ffffff;
+    width: 87px;
+    height: 30px;
+    border-radius: 15px;
+}
+/*add block end*/
+
 .logo {
     position: absolute;
     right: 23px;
