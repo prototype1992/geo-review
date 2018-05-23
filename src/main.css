@@ -30,6 +30,8 @@ html, body, .wrapper {
 
 /*add block*/
 .addReview {
+    display: none;
+
     width: 380px;
     background-color: #ffffff;
     border-radius: 15px;
@@ -46,16 +48,16 @@ html, body, .wrapper {
 .header {
     background-color: #ff8663;
     color: #ffffff;
-    height: 44px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 15px;
+    padding: 13px 15px;
 }
 
 .address {
     padding-left: 15px;
     position: relative;
+    width: 320px;
 }
 
 .address:before {
@@ -137,7 +139,7 @@ html, body, .wrapper {
     color: #9f9f9f;
 }
 
-.form-place {
+.form-place-name {
     display: block;
     width: 100%;
     height: 34px;
