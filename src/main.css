@@ -190,6 +190,14 @@ html, body, .wrapper {
     height: 79px;
 }
 
+.balloonLink {
+    color: #000000;
+}
+
+.balloonLink:hover {
+    text-decoration: none;
+}
+
 /*custom scroll*/
 ::-webkit-scrollbar-button {
     width: 5px;
