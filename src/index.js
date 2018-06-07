@@ -7,7 +7,8 @@ let myClusterer = null; // кластер для меток
 let currentPlaceMark = null; // текущая открытая метка
 let coords = null; // временное хранение координат
 let points = []; // временное хранение координат
-let reviews = [];
+let reviews = {};
+let currentReviews = [];
 
 // элементы ДОМ
 const DOM = {
@@ -20,42 +21,6 @@ const DOM = {
     formText: document.querySelector('#form-text'),
     list: document.querySelector('#list'),
 };
-
-// events
-DOM.addBtn.addEventListener('click', event => {
-    let {formName, formPlaceName, formText} = DOM;
-
-    let nameValue = formName.value;
-    let placeValue = formPlaceName.value;
-    let comment = formText.value;
-
-    addReview(nameValue, placeValue, comment);
-
-    renderReviews(reviews);
-
-    // Если метка уже создана.
-    if (currentPlaceMark) {
-        console.log('coords', coords);
-        console.log('currentPlaceMark', currentPlaceMark);
-        if (coords.join() !== currentPlaceMark.join()) {
-            // тогда создаем метку
-            createPlaceMark(coords, nameValue, placeValue, comment, date);
-        }
-        // add review
-        console.log('add review');
-    } else {
-        // тогда создаем метку
-        createPlaceMark(coords, nameValue, placeValue, comment, date);
-    }
-});
-
-DOM.close.addEventListener('click', () => {
-    // скрываем блок с отзывами и формой
-    hideAddReview();
-
-    // очищаем текущий маркер
-    currentPlaceMark = null;
-});
 
 ymaps.ready(() => {
     myMap = new ymaps.Map("map", {
@@ -82,15 +47,10 @@ ymaps.ready(() => {
         // отображаем блок с добавлением
         showAddReview();
 
+        // если метка есть, сравни ее с координатами
         if (currentPlaceMark) {
-            if (coords.join() !== currentPlaceMark.join()) {
-                console.log('111');
-            } else {
-                // если выбранная метка есть, рендерим отзывы
-                console.log('Рендерим отзывы');
-                // рендерим отзывы
-                renderReviews(reviews);
-            }
+            // рендерим отзывы
+            // renderReviews(reviews);
         } else {
             // иначе очищаем блок отзывы
             DOM.list.innerHTML = 'Отзывов пока нет...';
@@ -102,14 +62,47 @@ ymaps.ready(() => {
         }
 
         // получаем данные по координатам
-        ymaps.geocode(coords)
-            .then((response) => {
-                // меняем адрес на блоке добавления
-                let firstGeoObject = response.geoObjects.get(0);
-                // меняем адрес на блоке добавления
-                DOM.address.textContent = firstGeoObject.getAddressLine();
-            });
+        changeAddress(coords, DOM.address);
     });
+});
+
+// событие добавления отзыва
+DOM.addBtn.addEventListener('click', event => {
+    let {formName, formPlaceName, formText} = DOM;
+
+    let newReview = {
+        // id: currentPlaceMark.geometry.getCoordinates().toString(),
+        name: formName.value,
+        placeValue: formPlaceName.value,
+        comment: formText.value,
+        date: Date.now().toLocaleString()
+    };
+
+    console.log('currentPlaceMark---', currentPlaceMark);
+
+    // Если метка уже создана.
+    if (!currentPlaceMark) {
+        createPlaceMark(coords);
+        addReview(newReview);
+        console.log('currentPlaceMark 1', reviews);
+        renderReviews(reviews);
+    } else {
+        // add review
+        addReview(newReview);
+        console.log('currentPlaceMark 2', reviews);
+        renderReviews(reviews);
+    }
+});
+
+DOM.close.addEventListener('click', () => {
+    // скрываем блок с отзывами и формой
+    hideAddReview();
+
+    // очищаем текущий маркер
+    currentPlaceMark = null;
+
+    // очищаем отзывы
+    reviews = [];
 });
 
 // скрытие блока ДОБАВЛЕНИЯ
@@ -125,49 +118,36 @@ function showAddReview() {
 }
 
 // создание метки
-function createPlaceMark(coords, name, place, comment, date) {
+function createPlaceMark(coords) {
     //Создаём метку.
     let newPlaceMark = new ymaps.Placemark(coords, {
-        balloonContentHeader: `<h3>${place}</h3>`,
-        balloonContentBody: `<div>
-            <a href="" onclick="showAddReview()" class="balloonLink">${DOM.address.textContent}</a>
-            <p>${comment}</p>
-        </div>`,
-        balloonContentFooter: `<p>${date}</p>`
-    }, {
         preset: 'islands#violetDotIconWithCaption',
         draggable: false,
         openBalloonOnClick: false
     });
 
-    let newReview = {
-        id: Date.now(),
-        name,
-        place,
-        comment,
-        date
-    };
+    currentPlaceMark = newPlaceMark;
 
+    // создаем поле с отзывами в метке
     newPlaceMark.properties.set('reviews', []);
-    console.log(newPlaceMark.properties.get('reviews').push(newReview));
-    console.log(newPlaceMark.properties.get('reviews'));
-
-    // добавляем координаты нового маркера к текущей открытой метке
-    currentPlaceMark = newPlaceMark.geometry.getCoordinates();
-
-    console.log('currentPlaceMark', currentPlaceMark);
 
     reviews = newPlaceMark.properties.get('reviews');
-
-    console.log('reviews', reviews);
 
     // добавляем флажок на карту
     myMap.geoObjects.add(newPlaceMark);
 
-    console.log('commentContent', newPlaceMark);
-
     newPlaceMark.events.add('click', event => {
+        // показываем блок
         showAddReview();
+
+        // меняем адрес
+        changeAddress(newPlaceMark.geometry.getCoordinates(), DOM.address);
+
+        // рендерим отзывы
+        console.log('reviews1', reviews);
+        reviews = newPlaceMark.properties.get('reviews');
+        console.log('reviews2', reviews);
+        renderReviews(reviews);
     });
 }
 
@@ -187,18 +167,21 @@ function renderReviews(data) {
 }
 
 // добавление отзыва
-function addReview(name, place, comment) {
-    if (name && place && comment) {
-        let newReview = {
-            id: Date.now(),
-            userName: name,
-            placeName: place,
-            comment: comment,
-            date: new Date().toLocaleTimeString()
-        };
-
-        reviews.push(newReview);
+function addReview(object) {
+    if (Object.keys(object).length > 0) {
+        reviews.push(object);
     } else {
         alert('Заполните все поля для добавления отзыва!');
     }
+}
+
+function changeAddress(coords, element) {
+    // получаем данные по координатам
+    ymaps.geocode(coords)
+        .then((response) => {
+            // меняем адрес на блоке добавления
+            let firstGeoObject = response.geoObjects.get(0);
+            // меняем адрес на блоке добавления
+            element.textContent = firstGeoObject.getAddressLine();
+        });
 }

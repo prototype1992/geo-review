@@ -20,11 +20,11 @@ export function createReviewNode(item) {
 
     let reviewName = document.createElement('h4');
     reviewName.classList.add('review-name');
-    reviewName.textContent = item.userName;
+    reviewName.textContent = item.name;
 
     let reviewPlace = document.createElement('span');
     reviewPlace.classList.add('review-place');
-    reviewPlace.textContent = item.placeName;
+    reviewPlace.textContent = item.place;
 
     let reviewDate = document.createElement('span');
     reviewDate.classList.add('review-date');
