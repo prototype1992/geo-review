@@ -32,8 +32,19 @@ ymaps.ready(() => {
 
     // создаем кластер
     myClusterer = new ymaps.Clusterer({
-        preset: 'islands#invertedVioletClusterIcons'
+        preset: 'islands#invertedVioletClusterIcons',
+        groupByCoordinates: false,
+        clusterDisableClickZoom: true,
+        clusterHideIconOnBalloonOpen: false,
+        geoObjectHideIconOnBalloonOpen: false,
+        clusterOpenBalloonOnClick: true,
+        clusterBalloonContentLayout: 'cluster#balloonCarousel',
+        clusterBalloonPanelMaxMapArea: 0,
+        clusterBalloonContentLayoutWidth: 200,
+        clusterBalloonContentLayoutHeight: 130,
+        clusterBalloonPagerSize: 5
     });
+    myClusterer.add(points);
     myMap.geoObjects.add(myClusterer);
 
     // клик по карте
@@ -120,11 +131,18 @@ function showAddReview() {
 // создание метки
 function createPlaceMark(coords) {
     //Создаём метку.
-    let newPlaceMark = new ymaps.Placemark(coords, {
-        preset: 'islands#violetDotIconWithCaption',
-        draggable: false,
-        openBalloonOnClick: false
-    });
+    let newPlaceMark = new ymaps.Placemark(
+        coords,
+        {
+            balloonContentHeader: 'Value',
+            balloonContentBody: '<a>address</a><br><br>' + 'Value' + '<br><br>',
+            balloonContentFooter:Date.now()
+        },
+        {
+            preset: 'islands#violetDotIconWithCaption',
+            draggable: false,
+            openBalloonOnClick: false
+        });
 
     currentPlaceMark = newPlaceMark;
 
@@ -135,6 +153,10 @@ function createPlaceMark(coords) {
 
     // добавляем флажок на карту
     myMap.geoObjects.add(newPlaceMark);
+    // clustered add
+    myClusterer.add(newPlaceMark);
+    // добавляем в points
+    points.push(newPlaceMark);
 
     newPlaceMark.events.add('click', event => {
         // показываем блок
