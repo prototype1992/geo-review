@@ -8,7 +8,6 @@ let currentPlaceMark = null; // текущая открытая метка
 let coords = null; // временное хранение координат
 let points = []; // временное хранение координат
 let reviews = {};
-let currentReviews = [];
 
 // элементы ДОМ
 const DOM = {
@@ -52,17 +51,16 @@ ymaps.ready(() => {
         // получаем координаты
         coords = e.get('coords');
 
-        console.log('coords', coords);
-        console.log('currentPlaceMark', currentPlaceMark);
+        // console.log('coords', coords);
+        // console.log('currentPlaceMark', currentPlaceMark);
 
         // отображаем блок с добавлением
         showAddReview();
 
         // если метка есть, сравни ее с координатами
         if (currentPlaceMark) {
-            console.log('click 1');
+            // если координаты не совпадают
             if (currentPlaceMark.geometry.getCoordinates().toString() !== coords.toString()) {
-                console.log('click 3');
                 // очищаем текущий маркер
                 currentPlaceMark = null;
 
@@ -74,7 +72,6 @@ ymaps.ready(() => {
             }
         } else {
             // иначе очищаем блок отзывы
-            console.log('click 2');
             DOM.list.innerHTML = 'Отзывов пока нет...';
         }
 
@@ -83,7 +80,7 @@ ymaps.ready(() => {
             myMap.balloon.close();
         }
 
-        // получаем данные по координатам
+        // меняем адрес в строке адреса
         changeAddress(coords, DOM.address);
     });
 });
@@ -104,7 +101,7 @@ DOM.addBtn.addEventListener('click', event => {
 
     // Если метка уже создана.
     if (!currentPlaceMark) {
-        createPlaceMark(coords);
+        createPlaceMark(coords, newReview);
         addReview(newReview);
         console.log('currentPlaceMark 1', reviews);
         renderReviews(reviews);
@@ -140,14 +137,14 @@ function showAddReview() {
 }
 
 // создание метки
-function createPlaceMark(coords) {
+function createPlaceMark(coords, review) {
     //Создаём метку.
     let newPlaceMark = new ymaps.Placemark(
         coords,
         {
-            balloonContentHeader: 'Value',
-            balloonContentBody: '<a>address</a><br><br>' + 'Value' + '<br><br>',
-            balloonContentFooter:Date.now()
+            balloonContentHeader: review.placeValue,
+            balloonContentBody: '<a href="#" onclick="showAddReview()">address</a><br><br>' + review.placeValue + '<br><br>',
+            balloonContentFooter: review.date
         },
         {
             preset: 'islands#violetDotIconWithCaption',
