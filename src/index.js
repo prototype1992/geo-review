@@ -60,10 +60,21 @@ ymaps.ready(() => {
 
         // если метка есть, сравни ее с координатами
         if (currentPlaceMark) {
-            // рендерим отзывы
-            // renderReviews(reviews);
+            console.log('click 1');
+            if (currentPlaceMark.geometry.getCoordinates().toString() !== coords.toString()) {
+                console.log('click 3');
+                // очищаем текущий маркер
+                currentPlaceMark = null;
+
+                // очищаем отзывы
+                reviews = [];
+
+                // очищаем блок отзывы
+                DOM.list.innerHTML = 'Отзывов пока нет...';
+            }
         } else {
             // иначе очищаем блок отзывы
+            console.log('click 2');
             DOM.list.innerHTML = 'Отзывов пока нет...';
         }
 
