@@ -89,12 +89,14 @@ ymaps.ready(() => {
 DOM.addBtn.addEventListener('click', event => {
     let {formName, formPlaceName, formText} = DOM;
 
+    let date = new Date();
+
     let newReview = {
         // id: currentPlaceMark.geometry.getCoordinates().toString(),
         name: formName.value,
         placeValue: formPlaceName.value,
         comment: formText.value,
-        date: Date.now().toLocaleString()
+        date: date.toLocaleString()
     };
 
     console.log('currentPlaceMark---', currentPlaceMark);
@@ -142,9 +144,12 @@ function createPlaceMark(coords, review) {
     let newPlaceMark = new ymaps.Placemark(
         coords,
         {
-            balloonContentHeader: review.placeValue,
-            balloonContentBody: '<a href="#" onclick="showAddReview()">address</a><br><br>' + review.placeValue + '<br><br>',
-            balloonContentFooter: review.date
+            balloonContentHeader: `<p>${review.placeValue}</p>`,
+            balloonContentBody: `<div>
+<h3 class="clusterTitle"><a href="#" class="clustererLinks">${DOM.address.textContent}</a></h3>
+<p class="clusterText">${review.placeValue}</p>
+</div>`,
+            balloonContentFooter: `<p>${review.date}</p>`
         },
         {
             preset: 'islands#violetDotIconWithCaption',
@@ -165,6 +170,18 @@ function createPlaceMark(coords, review) {
     myClusterer.add(newPlaceMark);
     // добавляем в points
     points.push(newPlaceMark);
+
+    let clustererLinks = document.querySelectorAll('.clustererLinks');
+
+    console.log('clustererLinks', clustererLinks);
+
+    // for (let link of clustererLinks) {
+    //     link.addEventListener('click', event => {
+    //         event.preventDefault();
+    //
+    //         showAddReview();
+    //     })
+    // }
 
     newPlaceMark.events.add('click', event => {
         // показываем блок
