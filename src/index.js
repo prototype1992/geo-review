@@ -39,8 +39,8 @@ ymaps.ready(() => {
         clusterOpenBalloonOnClick: true,
         clusterBalloonContentLayout: 'cluster#balloonCarousel',
         clusterBalloonPanelMaxMapArea: 0,
-        clusterBalloonContentLayoutWidth: 200,
-        clusterBalloonContentLayoutHeight: 130,
+        clusterBalloonContentLayoutWidth: 250,
+        clusterBalloonContentLayoutHeight: 150,
         clusterBalloonPagerSize: 5
     });
     myClusterer.add(points);
@@ -50,9 +50,6 @@ ymaps.ready(() => {
     myMap.events.add('click', function (e) {
         // получаем координаты
         coords = e.get('coords');
-
-        // console.log('coords', coords);
-        // console.log('currentPlaceMark', currentPlaceMark);
 
         // отображаем блок с добавлением
         showAddReview();
@@ -92,7 +89,6 @@ DOM.addBtn.addEventListener('click', event => {
     let date = new Date();
 
     let newReview = {
-        // id: currentPlaceMark.geometry.getCoordinates().toString(),
         name: formName.value,
         placeValue: formPlaceName.value,
         comment: formText.value,
@@ -103,13 +99,29 @@ DOM.addBtn.addEventListener('click', event => {
 
     // Если метка уже создана.
     if (!currentPlaceMark) {
+        // create placeMark to map
         createPlaceMark(coords, newReview);
+        // add review
         addReview(newReview);
-        renderReviews(reviews);
+        // valid fields
+        if (validForm()) {
+            // render reviews
+            renderReviews(reviews);
+
+            // clear form data
+            clearForm();
+        }
     } else {
         // add review
         addReview(newReview);
-        renderReviews(reviews);
+        // valid fields
+        if (validForm()) {
+            // render reviews
+            renderReviews(reviews);
+
+            // clear form data
+            clearForm();
+        }
     }
 });
 
@@ -160,9 +172,9 @@ let openClusterLink = function(event) {
     let localCoords = balloonLink.getAttribute('data-coords');
     let localReviews = [];
 
-    console.log('balloonLink', balloonLink);
-    console.log('localCoords', localCoords);
-    console.log('points', points);
+    // console.log('balloonLink', balloonLink);
+    // console.log('localCoords', localCoords);
+    // console.log('points', points);
 
     for(let item of points) {
         if (item.geometry._coordinates.toString() === localCoords.toString()) {
@@ -230,8 +242,6 @@ function createPlaceMark(coords, review) {
 function renderReviews(data) {
     DOM.list.innerHTML = '';
 
-    console.log('renderReviews data', data);
-
     let fragment = document.createDocumentFragment();
 
     for (let item of data) {
@@ -245,7 +255,9 @@ function renderReviews(data) {
 
 // добавление отзыва
 function addReview(object) {
-    if (Object.keys(object).length > 0) {
+    let {name, placeValue, comment} = object;
+    console.log('obj', object);
+    if (name && placeValue && comment) {
         reviews.push(object);
     } else {
         alert('Заполните все поля для добавления отзыва!');
@@ -261,4 +273,17 @@ function changeAddress(coords, element) {
             // меняем адрес на блоке добавления
             element.textContent = firstGeoObject.getAddressLine();
         });
+}
+
+function validForm() {
+    if (DOM.formName.value && DOM.formPlaceName.value && DOM.formText) {
+        return true;
+    }
+    return false;
+}
+
+function clearForm() {
+    DOM.formName.value = '';
+    DOM.formPlaceName.value = '';
+    DOM.formText.value = '';
 }
