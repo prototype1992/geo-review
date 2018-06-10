@@ -105,12 +105,10 @@ DOM.addBtn.addEventListener('click', event => {
     if (!currentPlaceMark) {
         createPlaceMark(coords, newReview);
         addReview(newReview);
-        console.log('currentPlaceMark 1', reviews);
         renderReviews(reviews);
     } else {
         // add review
         addReview(newReview);
-        console.log('currentPlaceMark 2', reviews);
         renderReviews(reviews);
     }
 });
@@ -133,10 +131,49 @@ function hideAddReview() {
 
 // отображение блока ДОБАВЛЕНИЯ
 function showAddReview() {
-    // DOM.addReview.style.top = event.clientY + 'px';
-    // DOM.addReview.style.left = event.clientX + 'px';
+    // console.log('event', window.event);
+    // let x = window.event.clientX;
+    // let y = window.event.clientY;
+    // let offsetX = window.event.offsetX;
+    // let offsetY = window.event.offsetY;
+    // let height = DOM.addReview.getComputedStyle('height');
+    // let width = DOM.addReview.getComputedStyle('width');
+
+    // if (x + width > window.outerWidth) {}
+
+    // console.log('x', x);
+    // console.log('y', y);
+    // console.log('offsetX', offsetX);
+    // console.log('offsetY', offsetY);
+    // console.log('DOM.addReview', DOM.addReview.outerHeight);
+
+    // DOM.addReview.style.top = y + 'px';
+    // DOM.addReview.style.left = x + 'px';
     DOM.addReview.style.display = 'block';
 }
+
+let openClusterLink = function(event) {
+    showAddReview();
+
+    let balloonLink = document.querySelector('.balloonLink');
+
+    let localCoords = balloonLink.getAttribute('data-coords');
+    let localReviews = [];
+
+    console.log('balloonLink', balloonLink);
+    console.log('localCoords', localCoords);
+    console.log('points', points);
+
+    for(let item of points) {
+        if (item.geometry._coordinates.toString() === localCoords.toString()) {
+            localReviews.push(item.properties.get('reviews'));
+            console.log('localReviews', localReviews);
+        }
+    }
+    renderReviews(localReviews[0]);
+};
+// костыль
+window.openClusterLink = openClusterLink;
 
 // создание метки
 function createPlaceMark(coords, review) {
@@ -146,7 +183,10 @@ function createPlaceMark(coords, review) {
         {
             balloonContentHeader: `<p>${review.placeValue}</p>`,
             balloonContentBody: `<div>
-<h3 class="clusterTitle"><a href="#" class="clustererLinks">${DOM.address.textContent}</a></h3>
+<h3 class="clusterTitle"><a href="#" data-coords="${coords}" class="balloonLink" onclick="(function() {
+    console.log('this', this);
+    window.openClusterLink();
+})()">${DOM.address.textContent}</a></h3>
 <p class="clusterText">${review.placeValue}</p>
 </div>`,
             balloonContentFooter: `<p>${review.date}</p>`
@@ -171,18 +211,6 @@ function createPlaceMark(coords, review) {
     // добавляем в points
     points.push(newPlaceMark);
 
-    let clustererLinks = document.querySelectorAll('.clustererLinks');
-
-    console.log('clustererLinks', clustererLinks);
-
-    // for (let link of clustererLinks) {
-    //     link.addEventListener('click', event => {
-    //         event.preventDefault();
-    //
-    //         showAddReview();
-    //     })
-    // }
-
     newPlaceMark.events.add('click', event => {
         // показываем блок
         showAddReview();
@@ -201,6 +229,8 @@ function createPlaceMark(coords, review) {
 // рендер отзывов
 function renderReviews(data) {
     DOM.list.innerHTML = '';
+
+    console.log('renderReviews data', data);
 
     let fragment = document.createDocumentFragment();
 

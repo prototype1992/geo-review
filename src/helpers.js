@@ -43,3 +43,33 @@ export function createReviewNode(item) {
 
     return li;
 }
+
+export function getCoordsForWindow(flag) {
+    let x = window.event.pageX;
+    let y = window.event.pageY;
+    let width = null;
+    let height = null;
+
+    if (flag === 'modal') {
+        width = 380;
+        height = 525;
+    } else {
+        width = 380;
+        height = 320;
+    }
+
+    if (x + width > document.documentElement.clientWidth) {
+        let deltaX = document.documentElement.clientWidth - x - width - 25;
+        x = x + deltaX;
+    }
+
+    if (y + height > document.documentElement.clientHeight) {
+        let deltaY = document.documentElement.clientHeight - y - height - 25;
+        y = y + deltaY;
+    }
+
+    return {
+        x: x,
+        y: y
+    }
+}
